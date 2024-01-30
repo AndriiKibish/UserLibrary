@@ -1,0 +1,85 @@
+{% extends 'libr/base.html' %}
+
+{% block content %}
+
+<h2>Library of {{ user }}</h2>
+<br>
+
+<form method="get" action="{% url 'user_libr' %}">
+
+  <label for="title">Title:</label>
+  <input type="text" id="title" name="title" value="{{ search_title }}">
+
+  <label for="author">Author:</label>
+  <input type="text" id="author" name="author" value="{{ search_author }}">
+
+  <label for="genre">Genre:</label>
+  <input type="text" id="genre" name="genre" value="{{ search_genre }}">
+
+  <label for="year">Year:</label>
+  <input type="text" id="year" name="year" value="{{ search_year }}">
+
+  <button type="submit" class="btn btn-secondary">Search</button>
+</form>
+
+<br>
+
+<form method="POST" action="{% url 'create_book'%}">
+    {% csrf_token %}
+    <a role="button" class="btn btn-primary" href="{% url 'create_book' %}">Add book</a>
+</form>
+
+<br>
+
+  <!-- Number of read and unread books -->
+  <div id="book-counts">
+    <p style="color: green;">Read: {{ read_books_count }}</p>
+    <p style="color: red;">Unread: {{ unread_books_count }}</p>
+  </div>
+
+  <div id="filter-links">
+    <a href="{% url 'user_libr' %}?status=all">All</a>
+    <a href="{% url 'user_libr' %}?status=read">Read</a>
+    <a href="{% url 'user_libr' %}?status=unread">Unread</a>
+  </div>
+
+<div class="row justify-content-center mt-5">
+  <div class="col-md-10">
+    <div class="list-group">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Title</th>
+            <th>Author</th>
+            <th>Genre</th>
+            <th>Year</th>
+            <th>Status</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for book in books %}
+            <tr>
+              <td>{{ forloop.counter }}.</td>
+              <td>{{ book.title }}</td>
+              <td>{{ book.author }}</td>
+              <td>{{ book.genre }}</td>
+              <td>{{ book.year }}</td>
+              <td class="book-read-status">
+                {% if book.is_read %}
+                  <span style="color: green;">Read</span>
+                {% else %}
+                  <strong style="color: red;">Unread</strong>
+                {% endif %}
+              </td>
+              <td><a href="{% url 'book_detail' book.id %}">Edit/delete</a></td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+   </div>
+</div>
+
+{% endblock %}
